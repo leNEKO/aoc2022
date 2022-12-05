@@ -1,7 +1,7 @@
 use crate::helpers::read_lines;
 use std::io::Result;
 
-fn get_max(filepath: &str, top: usize) -> Result<u32> {
+pub fn get_max(filepath: &str, top: usize) -> Result<u32> {
     let line_iterator = read_lines::<String>(filepath)?;
 
     let mut totals: Vec<u32> = vec![];
