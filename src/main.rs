@@ -4,30 +4,33 @@ use std::{
 };
 
 fn main() ->Result<()> {
-    dbg!(get_max("data/input.txt")?);
+    dbg!(get_max("data/input.txt", 1)?);
+    dbg!(get_max("data/input.txt", 3)?);
 
     Ok(())
 }
 
-fn get_max(filepath: &str) -> Result<u32>{
+fn get_max(filepath: &str, top: usize) -> Result<u32>{
     let line_iterator = read_lines::<String>(filepath)?;
 
-    let mut max_total = 0;
+    let mut totals: Vec<u32> = vec![];
     let mut current_total = 0;
 
     for line in line_iterator {
         match line?.parse::<u32>() {
             Ok(value) => current_total += value,
             _ => {
-                if current_total > max_total {
-                    max_total = current_total;
-                }
+                totals.push(current_total);
                 current_total = 0;
             }
         }
     };
+    totals.push(current_total);
+    totals.sort();
 
-    Ok(max_total)
+    let sum = totals.iter().rev().take(top).sum();
+    
+    Ok(sum)
 }
 
 fn read_lines<T>(filename: &str) -> Result<Lines<BufReader<File>>>{
@@ -41,6 +44,14 @@ fn read_lines<T>(filename: &str) -> Result<Lines<BufReader<File>>>{
 fn test_get_max() {
     assert_eq!(
         24000_u32,
-        get_max("data/test.txt").unwrap()
+        get_max("data/test.txt", 1).unwrap()
+    );
+}
+
+#[test]
+fn test_get_top3_max() {
+    assert_eq!(
+        45000,
+        get_max("data/test.txt", 3).unwrap()
     );
 }
